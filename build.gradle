@@ -1,0 +1,66 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.ilhamyp'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("org.seleniumhq.selenium:selenium-java:4.44.0")
+    testImplementation("io.github.bonigarcia:webdrivermanager:6.3.4")
+
+    implementation("io.cucumber:cucumber-java:7.34.3")
+    testImplementation("io.cucumber:cucumber-junit:7.34.3")
+
+    testImplementation platform('org.junit:junit-bom:6.0.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    testImplementation("io.rest-assured:rest-assured:6.0.0")
+    implementation("io.rest-assured:json-schema-validator:6.0.0")
+
+    implementation("org.json:json:20251224")
+    testImplementation 'io.github.cdimascio:dotenv-java:3.0.0'
+
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.10.2'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task webTest(type: Test){
+    description = 'Runs the web tests.'
+    group = 'verification'
+
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    useJUnitPlatform()
+    include '**/WebTestRunner.class'
+
+    testLogging {
+        events("Passed", "Skipped", "Failed")
+    }
+}
+
+task apiTest(type: Test){
+    description = 'Runs the api tests.'
+    group = 'verification'
+
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    useJUnitPlatform()
+    include '**/ApiTestRunner.class'
+
+    environment "APP_ID", System.getenv('APP_ID')
+
+    testLogging {
+        events("Passed", "Skipped", "Failed")
+    }
+}
